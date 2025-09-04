@@ -25,7 +25,6 @@ public class LoginStep extends BaseUtil {
         this.base = base;
     }
 
-    // Converts DataTable entries into User objects
     @DataTableType(replaceWithEmptyString = "[blank]")
     public User convert(Map<String, String> entry) {
         return new User(
@@ -61,13 +60,9 @@ public class LoginStep extends BaseUtil {
     public void iShouldSeeTheUserformPage() throws Throwable {
         base.scenarioDef.createNode(new GherkinKeyword("Then"), "I should see the userform page");
 
-        // Log current URL for debugging
         System.out.println("Current URL: " + base.Driver.getCurrentUrl());
+        System.out.println("Page title: " + base.Driver.getTitle());
 
-        // Optional: short pause to allow page to settle
-        Thread.sleep(2000);
-
-        // Use a longer wait and presence check
         WebDriverWait wait = new WebDriverWait(base.Driver, Duration.ofSeconds(20));
         WebElement initialField = wait.until(ExpectedConditions.presenceOfElementLocated(By.id("Initial")));
 
@@ -75,7 +70,6 @@ public class LoginStep extends BaseUtil {
         System.out.println("Userform page loaded successfully");
     }
 
-    // Inner class to represent login credentials
     public class User {
         public String username;
         public String password;
