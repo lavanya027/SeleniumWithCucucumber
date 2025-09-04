@@ -12,9 +12,9 @@ public class LoginPage {
     private WebDriver driver;
     private WebDriverWait wait;
 
-    private By txtUserName = By.name("UserName");
-    private By txtPassword = By.name("Password");
-    private By btnLogin = By.name("Login");
+    private By txtUserName = By.xpath("//input[@name='UserName']");
+    private By txtPassword = By.xpath("//input[@name='Password']");
+    private By btnLogin = By.xpath("//input[@name='Login']");
 
     public LoginPage(WebDriver driver) {
         this.driver = driver;
@@ -22,11 +22,11 @@ public class LoginPage {
     }
 
     public void Login(String userName, String password) {
-        // Optional: log page source for debugging
-        System.out.println("🔍 Page Source Preview:\n" + driver.getPageSource());
+        System.out.println("🔍 Current URL: " + driver.getCurrentUrl());
+        System.out.println("🔍 Page Title: " + driver.getTitle());
+        System.out.println("🔍 Page Source Preview:\n" + driver.getPageSource().substring(0, 1000));
 
-        // Optional: short pause to allow page to settle
-        try { Thread.sleep(2000); } catch (InterruptedException ignored) {}
+        try { Thread.sleep(3000); } catch (InterruptedException ignored) {}
 
         WebElement usernameField = wait.until(ExpectedConditions.presenceOfElementLocated(txtUserName));
         WebElement passwordField = wait.until(ExpectedConditions.presenceOfElementLocated(txtPassword));
