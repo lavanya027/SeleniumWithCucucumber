@@ -3,7 +3,6 @@ package steps;
 import Base.BaseUtil;
 import io.cucumber.java.*;
 import io.github.bonigarcia.wdm.WebDriverManager;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 
@@ -19,13 +18,14 @@ public class Hook extends BaseUtil {
     public void InitializeTest(Scenario scenario) {
         base.scenarioDef = base.features.createNode(scenario.getName());
 
-        // Clear any cached or outdated ChromeDriver versions
+        // Clear cache to ensure correct ChromeDriver version
         WebDriverManager.chromedriver().clearDriverCache();
         WebDriverManager.chromedriver().clearResolutionCache();
         WebDriverManager.chromedriver().setup();
 
-        // Configure Chrome (non-headless for debugging)
         ChromeOptions chromeOptions = new ChromeOptions();
+        // Temporarily disable headless for debugging
+        // chromeOptions.addArguments("--headless=new");
         chromeOptions.addArguments("--start-maximized");
         chromeOptions.addArguments("--disable-gpu");
         chromeOptions.addArguments("--window-size=1920,1080");
@@ -38,7 +38,7 @@ public class Hook extends BaseUtil {
     public void TearDownTest(Scenario scenario) {
         if (scenario.isFailed()) {
             System.out.println("❌ Test failed: " + scenario.getName());
-            // You can add screenshot capture logic here
+            // Screenshot logic can be added here
         }
 
         System.out.println("🧹 Closing the browser");
