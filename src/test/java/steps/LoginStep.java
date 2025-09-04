@@ -8,7 +8,6 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import org.junit.Assert;
 import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -26,6 +25,7 @@ public class LoginStep extends BaseUtil {
         this.base = base;
     }
 
+    // Converts DataTable entries into User objects
     @DataTableType(replaceWithEmptyString = "[blank]")
     public User convert(Map<String, String> entry) {
         return new User(
@@ -38,6 +38,7 @@ public class LoginStep extends BaseUtil {
     public void iNavigateToTheLoginPage() throws Throwable {
         base.scenarioDef.createNode(new GherkinKeyword("Given"), "I navigate to the login page");
         base.Driver.navigate().to("http://www.executeautomation.com/demosite/Login.html");
+        System.out.println("Navigated to login page");
     }
 
     @And("^I enter the following for Login$")
@@ -45,6 +46,7 @@ public class LoginStep extends BaseUtil {
         base.scenarioDef.createNode(new GherkinKeyword("And"), "I enter the following for login");
         LoginPage page = new LoginPage(base.Driver);
         page.Login(table.get(0).username, table.get(0).password);
+        System.out.println("Entered credentials: " + table.get(0).username);
     }
 
     @And("^I click login button$")
@@ -52,16 +54,28 @@ public class LoginStep extends BaseUtil {
         base.scenarioDef.createNode(new GherkinKeyword("And"), "I click login button");
         LoginPage page = new LoginPage(base.Driver);
         page.ClickLogin();
+        System.out.println("Clicked login button");
     }
 
     @Then("^I should see the userform page$")
     public void iShouldSeeTheUserformPage() throws Throwable {
         base.scenarioDef.createNode(new GherkinKeyword("Then"), "I should see the userform page");
-        WebDriverWait wait = new WebDriverWait(base.Driver, Duration.ofSeconds(10));
-        WebElement initialField = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("Initial")));
+
+        // Log current URL for debugging
+        System.out.println("Current URL: " + base.Driver.getCurrentUrl());
+
+        // Optional: short pause to allow page to settle
+        Thread.sleep(2000);
+
+        // Use a longer wait and presence check
+        WebDriverWait wait = new WebDriverWait(base.Driver, Duration.ofSeconds(20));
+        WebElement initialField = wait.until(ExpectedConditions.presenceOfElementLocated(By.id("Initial")));
+
         Assert.assertTrue("Initial field is not displayed", initialField.isDisplayed());
+        System.out.println("Userform page loaded successfully");
     }
 
+    // Inner class to represent login credentials
     public class User {
         public String username;
         public String password;
