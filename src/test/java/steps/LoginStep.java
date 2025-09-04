@@ -73,17 +73,17 @@ public class LoginStep extends BaseUtil {
             WebElement initialField = wait.until(ExpectedConditions.presenceOfElementLocated(By.id("Initial")));
 
             if (initialField.isDisplayed()) {
-                System.out.println("Userform page loaded successfully");
+                System.out.println("✅ Initial field is visible");
                 Assert.assertTrue(true);
             } else {
-                System.out.println("Initial field is present but not visible");
+                System.out.println("⚠️ Initial field is present but not visible");
                 Assert.fail("Initial field is not visible");
             }
 
         } catch (Exception e) {
             System.out.println("❌ Timeout or error locating 'Initial' field: " + e.getMessage());
 
-            // Optional: capture screenshot on failure
+            // Optional: capture screenshot
             try {
                 File screenshot = ((TakesScreenshot) base.Driver).getScreenshotAs(OutputType.FILE);
                 File destination = new File("target/screenshots/userform_failure.png");
@@ -91,7 +91,7 @@ public class LoginStep extends BaseUtil {
                 Files.copy(screenshot.toPath(), destination.toPath(), StandardCopyOption.REPLACE_EXISTING);
                 System.out.println("Screenshot saved to: " + destination.getAbsolutePath());
             } catch (Exception ex) {
-                System.out.println("Failed to capture screenshot: " + ex.getMessage());
+                System.out.println("Screenshot capture failed: " + ex.getMessage());
             }
 
             Assert.fail("Userform page did not load as expected");
