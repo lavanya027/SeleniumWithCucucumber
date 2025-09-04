@@ -1,27 +1,13 @@
 package steps;
 
 import Base.BaseUtil;
-
-
-//import cucumber.api.PickleStepTestStep;
-//import cucumber.api.TestCase;
-//import gherkin.pickles.PickleStep;
-//import io.cucumber.core.api.Scenario;
-
-
 import io.cucumber.java.*;
 import io.github.bonigarcia.wdm.WebDriverManager;
-import org.checkerframework.checker.units.qual.C;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.edge.EdgeDriver;
 
-
-/**
- * Created by Karthik on 31/01/2019.
- */
-
-public class Hook extends BaseUtil{
+public class Hook extends BaseUtil {
 
     private BaseUtil base;
 
@@ -32,31 +18,45 @@ public class Hook extends BaseUtil{
     @Before
     public void InitializeTest(Scenario scenario) {
         base.scenarioDef = base.features.createNode(scenario.getName());
-        WebDriverManager.chromedriver().setup();
-        ChromeOptions chromeOptions = new ChromeOptions();
-        chromeOptions.addArguments("--headless");
-        base.Driver = new ChromeDriver(chromeOptions);
-    }
 
+        // Setup ChromeDriver automatically based on installed Chrome version
+        WebDriverManager.chromedriver().setup();
+        System.out.println("ChromeDriver version: " + WebDriverManager.chromedriver().getDownloadedVersion());
+
+        // Configure headless Chrome
+        ChromeOptions chromeOptions = new ChromeOptions();
+        chromeOptions.addArguments("--headless=new"); // Modern headless mode for Chrome 109+
+        chromeOptions.addArguments("--disable-gpu");
+        chromeOptions.addArguments("--window-size=1920,1080");
+
+        base.Driver = new ChromeDriver(chromeOptions);
+        System.out.println("Chrome browser launched successfully");
+    }
 
     @After
     public void TearDownTest(Scenario scenario) {
         if (scenario.isFailed()) {
-            //Take screenshot logic goes here
-            System.out.println(scenario.getName());
+            System.out.println("Test failed: " + scenario.getName());
+            // Screenshot logic can be added here
         }
-        System.out.println("Closing the browser : MOCK");
-        base.Driver.quit();
+
+        System.out.println("Closing the browser");
+
+        if (base.Driver != null) {
+            base.Driver.quit();
+            System.out.println("Browser closed successfully");
+        } else {
+            System.out.println("Driver was not initialized — skipping quit.");
+        }
     }
 
     @BeforeStep
     public void BeforeEveryStep(Scenario scenario) {
-        System.out.println("Before every step " + scenario.getId());
+        System.out.println("Before step: " + scenario.getName());
     }
 
     @AfterStep
-    public void AfterEveryStep(Scenario scenario) throws NoSuchFieldException, IllegalAccessException {
-        //System.out.println("Before every step " + stepTestStep.getId());
+    public void AfterEveryStep(Scenario scenario) {
+        System.out.println("After step: " + scenario.getName());
     }
-
 }
