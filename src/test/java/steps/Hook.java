@@ -21,7 +21,6 @@ public class Hook extends BaseUtil {
 
         // Setup ChromeDriver automatically based on installed Chrome version
         WebDriverManager.chromedriver().setup();
-        System.out.println("ChromeDriver version: " + WebDriverManager.chromedriver().getDownloadedVersion());
 
         // Configure headless Chrome
         ChromeOptions chromeOptions = new ChromeOptions();
