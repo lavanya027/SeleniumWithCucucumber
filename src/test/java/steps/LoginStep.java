@@ -61,10 +61,19 @@ public class LoginStep extends BaseUtil {
         base.scenarioDef.createNode(new GherkinKeyword("Then"), "I should see the success page");
 
         WebDriverWait wait = new WebDriverWait(base.Driver, Duration.ofSeconds(20));
-        WebElement logoutButton = wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//button[text()='Log out']")));
+        WebElement logoutButton = wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//a[text()='Log out']")));
 
         Assert.assertTrue("Logout button is not displayed", logoutButton.isDisplayed());
         System.out.println("✅ Login successful — success page loaded");
+    }
+
+    @Then("^I should not see the success page$")
+    public void iShouldNotSeeTheSuccessPage() throws Throwable {
+        base.scenarioDef.createNode(new GherkinKeyword("Then"), "I should not see the success page");
+
+        boolean isLogoutVisible = base.Driver.findElements(By.xpath("//a[text()='Log out']")).size() > 0;
+        Assert.assertFalse("Unexpected success page appeared", isLogoutVisible);
+        System.out.println("✅ Login failed as expected — success page not shown");
     }
 
     public class User {
