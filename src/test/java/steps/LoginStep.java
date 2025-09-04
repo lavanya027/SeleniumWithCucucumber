@@ -1,100 +1,43 @@
-package steps;
+package pages;
 
-import Base.BaseUtil;
-import com.aventstack.extentreports.GherkinKeyword;
-
-import io.cucumber.java.DataTableType;
-import io.cucumber.java.en.And;
-import io.cucumber.java.en.Given;
-import io.cucumber.java.en.Then;
-import org.junit.Assert;
 import org.openqa.selenium.By;
-import pages.LoginPage;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.WebDriverWait;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import java.time.Duration;
 
-import java.util.List;
-import java.util.Map;
+public class LoginPage {
 
-/**
- * Created by Karthik on 31/01/2019.
- */
-public class LoginStep extends BaseUtil{
+    private WebDriver driver;
+    private WebDriverWait wait;
 
-    private  BaseUtil base;
+    // Locators
+    private By txtUserName = By.name("UserName");
+    private By txtPassword = By.name("Password");
+    private By btnLogin = By.name("Login");
 
-    public LoginStep(BaseUtil base) {
-        this.base = base;
+    // Constructor
+    public LoginPage(WebDriver driver) {
+        this.driver = driver;
+        this.wait = new WebDriverWait(driver, Duration.ofSeconds(10));
     }
 
-    @DataTableType(replaceWithEmptyString = "[blank]")
-    public User convert(Map<String, String> entry){
-        return new User(
-                entry.get("username"),
-                entry.get("password").concat("$$$$$")
-        );
+    // Enter username and password
+    public void Login(String userName, String password) {
+        WebElement usernameField = wait.until(ExpectedConditions.visibilityOfElementLocated(txtUserName));
+        WebElement passwordField = wait.until(ExpectedConditions.visibilityOfElementLocated(txtPassword));
+
+        usernameField.clear();
+        usernameField.sendKeys(userName);
+
+        passwordField.clear();
+        passwordField.sendKeys(password);
     }
 
-
-    @Then("^I should see the userform page$")
-    public void iShouldSeeTheUserformPage() throws Throwable {
-        scenarioDef.createNode(new GherkinKeyword("Then"), "I should see the userform page");
-
-        Assert.assertEquals("Its not displayed", base.Driver.findElement(By.id("Initial")).isDisplayed(), true);
+    // Click login button
+    public void ClickLogin() {
+        WebElement loginButton = wait.until(ExpectedConditions.elementToBeClickable(btnLogin));
+        loginButton.click();
     }
-
-    @Given("^I navigate to the login page$")
-    public void iNavigateToTheLoginPage() throws Throwable {
-        base.scenarioDef.createNode(new GherkinKeyword("Given"), "I navigate to the login page");
-        System.out.println("Navigate Login Page");
-        base.Driver.navigate().to("http://www.executeautomation.com/demosite/Login.html");
-    }
-
-
-    @And("^I click login button$")
-    public void iClickLoginButton() throws Throwable {
-        base.scenarioDef.createNode(new GherkinKeyword("And"), "I click login button");
-        LoginPage page = new LoginPage(base.Driver);
-        page.ClickLogin();
-    }
-
-
-    @And("^I enter the following for Login$")
-    public void iEnterTheFollowingForLogin(List<User> table) throws Throwable {
-        base.scenarioDef.createNode(new GherkinKeyword("And"), "I enter the following for login");
-        //Create an ArrayList
-        //List<User> users =  new ArrayList<User>();
-        //Store all the users
-        //List<User> users = table.asList(User.class);
-
-        LoginPage page = new LoginPage(base.Driver);
-
-        page.Login(table.get(0).username, table.get(0).password);
-
-        //page.Login(users.get(2), users.get(3));
-
-    }
-
-    @And("^I enter ([^\"]*) and ([^\"]*)$")
-    public void iEnterUsernameAndPassword(String userName, String password) throws Throwable {
-        base.scenarioDef.createNode(new GherkinKeyword("And"), "I enter username and password");
-        System.out.println("UserName is : " + userName);
-        System.out.println("Password is : " + password);
-    }
-
-    @Then("^I should see the userform page wrongly$")
-    public void iShouldSeeTheUserformPageWrongly() throws Throwable {
-        base.scenarioDef.createNode(new GherkinKeyword("Then"), "I should see  the useform page wrongly");
-        //Assert.assertEquals("Its not displayed", base.Driver.findElement(By.id("sdfgdsfsd")).isDisplayed(), true);
-    }
-
-
-    public class User {
-        public String username;
-        public String password;
-
-        public User(String userName, String passWord) {
-            username= userName;
-            password = passWord;
-        }
-    }
-
 }
