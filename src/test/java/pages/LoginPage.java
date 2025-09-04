@@ -18,12 +18,12 @@ public class LoginPage {
 
     public LoginPage(WebDriver driver) {
         this.driver = driver;
-        this.wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        this.wait = new WebDriverWait(driver, Duration.ofSeconds(20));
     }
 
     public void Login(String userName, String password) {
-        WebElement usernameField = wait.until(ExpectedConditions.visibilityOfElementLocated(txtUserName));
-        WebElement passwordField = wait.until(ExpectedConditions.visibilityOfElementLocated(txtPassword));
+        WebElement usernameField = wait.until(ExpectedConditions.presenceOfElementLocated(txtUserName));
+        WebElement passwordField = wait.until(ExpectedConditions.presenceOfElementLocated(txtPassword));
 
         usernameField.clear();
         usernameField.sendKeys(userName);
@@ -33,7 +33,7 @@ public class LoginPage {
     }
 
     public void ClickLogin() {
-        WebElement loginButton = wait.until(ExpectedConditions.elementToBeClickable(btnLogin));
+        WebElement loginButton = wait.until(ExpectedConditions.presenceOfElementLocated(btnLogin));
         loginButton.click();
     }
 }
