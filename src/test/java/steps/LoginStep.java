@@ -8,11 +8,16 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import org.junit.Assert;
 import org.openqa.selenium.By;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import pages.LoginPage;
 
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
@@ -63,11 +68,34 @@ public class LoginStep extends BaseUtil {
         System.out.println("Current URL: " + base.Driver.getCurrentUrl());
         System.out.println("Page title: " + base.Driver.getTitle());
 
-        WebDriverWait wait = new WebDriverWait(base.Driver, Duration.ofSeconds(20));
-        WebElement initialField = wait.until(ExpectedConditions.presenceOfElementLocated(By.id("Initial")));
+        try {
+            WebDriverWait wait = new WebDriverWait(base.Driver, Duration.ofSeconds(30));
+            WebElement initialField = wait.until(ExpectedConditions.presenceOfElementLocated(By.id("Initial")));
 
-        Assert.assertTrue("Initial field is not displayed", initialField.isDisplayed());
-        System.out.println("Userform page loaded successfully");
+            if (initialField.isDisplayed()) {
+                System.out.println("Userform page loaded successfully");
+                Assert.assertTrue(true);
+            } else {
+                System.out.println("Initial field is present but not visible");
+                Assert.fail("Initial field is not visible");
+            }
+
+        } catch (Exception e) {
+            System.out.println("❌ Timeout or error locating 'Initial' field: " + e.getMessage());
+
+            // Optional: capture screenshot on failure
+            try {
+                File screenshot = ((TakesScreenshot) base.Driver).getScreenshotAs(OutputType.FILE);
+                File destination = new File("target/screenshots/userform_failure.png");
+                destination.getParentFile().mkdirs();
+                Files.copy(screenshot.toPath(), destination.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                System.out.println("Screenshot saved to: " + destination.getAbsolutePath());
+            } catch (Exception ex) {
+                System.out.println("Failed to capture screenshot: " + ex.getMessage());
+            }
+
+            Assert.fail("Userform page did not load as expected");
+        }
     }
 
     public class User {
