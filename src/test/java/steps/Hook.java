@@ -19,13 +19,14 @@ public class Hook extends BaseUtil {
     public void InitializeTest(Scenario scenario) {
         base.scenarioDef = base.features.createNode(scenario.getName());
 
-        // Clear cache to avoid outdated ChromeDriver
+        // Clear any cached or outdated ChromeDriver versions
+        WebDriverManager.chromedriver().clearDriverCache();
         WebDriverManager.chromedriver().clearResolutionCache();
         WebDriverManager.chromedriver().setup();
 
-        // Configure headless Chrome for modern versions
+        // Configure Chrome (non-headless for debugging)
         ChromeOptions chromeOptions = new ChromeOptions();
-        chromeOptions.addArguments("--headless=new"); // Use modern headless mode
+        chromeOptions.addArguments("--start-maximized");
         chromeOptions.addArguments("--disable-gpu");
         chromeOptions.addArguments("--window-size=1920,1080");
 
@@ -37,7 +38,7 @@ public class Hook extends BaseUtil {
     public void TearDownTest(Scenario scenario) {
         if (scenario.isFailed()) {
             System.out.println("❌ Test failed: " + scenario.getName());
-            // Screenshot logic can be added here
+            // You can add screenshot capture logic here
         }
 
         System.out.println("🧹 Closing the browser");
