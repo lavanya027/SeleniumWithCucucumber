@@ -22,6 +22,12 @@ public class LoginPage {
     }
 
     public void Login(String userName, String password) {
+        // Optional: log page source for debugging
+        System.out.println("🔍 Page Source Preview:\n" + driver.getPageSource());
+
+        // Optional: short pause to allow page to settle
+        try { Thread.sleep(2000); } catch (InterruptedException ignored) {}
+
         WebElement usernameField = wait.until(ExpectedConditions.presenceOfElementLocated(txtUserName));
         WebElement passwordField = wait.until(ExpectedConditions.presenceOfElementLocated(txtPassword));
 
