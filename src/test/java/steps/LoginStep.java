@@ -1,43 +1,74 @@
-package pages;
+package steps;
 
+import Base.BaseUtil;
+import com.aventstack.extentreports.GherkinKeyword;
+import io.cucumber.java.DataTableType;
+import io.cucumber.java.en.And;
+import io.cucumber.java.en.Given;
+import io.cucumber.java.en.Then;
+import org.junit.Assert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.openqa.selenium.support.ui.ExpectedConditions;
+import pages.LoginPage;
+
 import java.time.Duration;
+import java.util.List;
+import java.util.Map;
 
-public class LoginPage {
+public class LoginStep extends BaseUtil {
 
-    private WebDriver driver;
-    private WebDriverWait wait;
+    private BaseUtil base;
 
-    // Locators
-    private By txtUserName = By.name("UserName");
-    private By txtPassword = By.name("Password");
-    private By btnLogin = By.name("Login");
-
-    // Constructor
-    public LoginPage(WebDriver driver) {
-        this.driver = driver;
-        this.wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+    public LoginStep(BaseUtil base) {
+        this.base = base;
     }
 
-    // Enter username and password
-    public void Login(String userName, String password) {
-        WebElement usernameField = wait.until(ExpectedConditions.visibilityOfElementLocated(txtUserName));
-        WebElement passwordField = wait.until(ExpectedConditions.visibilityOfElementLocated(txtPassword));
-
-        usernameField.clear();
-        usernameField.sendKeys(userName);
-
-        passwordField.clear();
-        passwordField.sendKeys(password);
+    @DataTableType(replaceWithEmptyString = "[blank]")
+    public User convert(Map<String, String> entry) {
+        return new User(
+                entry.get("username"),
+                entry.get("password").concat("$$$$$")
+        );
     }
 
-    // Click login button
-    public void ClickLogin() {
-        WebElement loginButton = wait.until(ExpectedConditions.elementToBeClickable(btnLogin));
-        loginButton.click();
+    @Given("^I navigate to the login page$")
+    public void iNavigateToTheLoginPage() throws Throwable {
+        base.scenarioDef.createNode(new GherkinKeyword("Given"), "I navigate to the login page");
+        base.Driver.navigate().to("http://www.executeautomation.com/demosite/Login.html");
+    }
+
+    @And("^I enter the following for Login$")
+    public void iEnterTheFollowingForLogin(List<User> table) throws Throwable {
+        base.scenarioDef.createNode(new GherkinKeyword("And"), "I enter the following for login");
+        LoginPage page = new LoginPage(base.Driver);
+        page.Login(table.get(0).username, table.get(0).password);
+    }
+
+    @And("^I click login button$")
+    public void iClickLoginButton() throws Throwable {
+        base.scenarioDef.createNode(new GherkinKeyword("And"), "I click login button");
+        LoginPage page = new LoginPage(base.Driver);
+        page.ClickLogin();
+    }
+
+    @Then("^I should see the userform page$")
+    public void iShouldSeeTheUserformPage() throws Throwable {
+        base.scenarioDef.createNode(new GherkinKeyword("Then"), "I should see the userform page");
+        WebDriverWait wait = new WebDriverWait(base.Driver, Duration.ofSeconds(10));
+        WebElement initialField = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("Initial")));
+        Assert.assertTrue("Initial field is not displayed", initialField.isDisplayed());
+    }
+
+    public class User {
+        public String username;
+        public String password;
+
+        public User(String userName, String passWord) {
+            username = userName;
+            password = passWord;
+        }
     }
 }
