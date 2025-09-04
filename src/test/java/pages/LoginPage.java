@@ -12,9 +12,9 @@ public class LoginPage {
     private WebDriver driver;
     private WebDriverWait wait;
 
-    private By txtUserName = By.xpath("//input[@name='UserName']");
-    private By txtPassword = By.xpath("//input[@name='Password']");
-    private By btnLogin = By.xpath("//input[@name='Login']");
+    private By txtUserName = By.id("username");
+    private By txtPassword = By.id("password");
+    private By btnLogin = By.id("submit");
 
     public LoginPage(WebDriver driver) {
         this.driver = driver;
@@ -24,9 +24,6 @@ public class LoginPage {
     public void Login(String userName, String password) {
         System.out.println("🔍 Current URL: " + driver.getCurrentUrl());
         System.out.println("🔍 Page Title: " + driver.getTitle());
-        System.out.println("🔍 Page Source Preview:\n" + driver.getPageSource().substring(0, 1000));
-
-        try { Thread.sleep(3000); } catch (InterruptedException ignored) {}
 
         WebElement usernameField = wait.until(ExpectedConditions.presenceOfElementLocated(txtUserName));
         WebElement passwordField = wait.until(ExpectedConditions.presenceOfElementLocated(txtPassword));
@@ -39,7 +36,7 @@ public class LoginPage {
     }
 
     public void ClickLogin() {
-        WebElement loginButton = wait.until(ExpectedConditions.presenceOfElementLocated(btnLogin));
+        WebElement loginButton = wait.until(ExpectedConditions.elementToBeClickable(btnLogin));
         loginButton.click();
     }
 }
